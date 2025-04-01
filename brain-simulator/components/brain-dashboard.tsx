@@ -406,7 +406,12 @@ export function BrainDashboard() {
   // Display error if API fails
   useEffect(() => {
     if (error) {
-      addEvent(`Ошибка связи с ИИ: ${error}`)
+      // Check if it's a geographic restriction error
+      if (error.includes('недоступна в вашем регионе')) {
+        addEvent(`🚫 Ошибка доступа: API OpenAI недоступна в вашем регионе (Нидерланды). Необходимо настроить прокси в разрешенном регионе.`)
+      } else {
+        addEvent(`Ошибка связи с ИИ: ${error}`)
+      }
     }
   }, [error])
 

@@ -5,10 +5,11 @@ import { CodeReviewResult, TestResult, FileModule } from '@/hooks/use-brain-api'
 // Initialize the OpenAI client with a fallback for development
 const apiKey = process.env.OPENAI_API_KEY || 'sk-dummy-key-for-development-only';
 
-// Initialize the OpenAI client
+// Initialize the OpenAI client with proxy configuration
 export const openai = new OpenAI({
   apiKey,
   dangerouslyAllowBrowser: true, // Enable client-side usage (use with caution)
+  baseURL: process.env.OPENAI_PROXY_URL || undefined, // Optional proxy URL
 });
 
 export type AgentRole = 'planner' | 'coder' | 'procrastinator' | 'critic' | 'researcher' | 'focus';
@@ -66,7 +67,7 @@ export async function generateCode(task: string, context: string[] = []): Promis
       : '';
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -106,7 +107,7 @@ export async function generateComplexCode(
       : '';
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -149,7 +150,7 @@ export async function planProject(specification: string): Promise<string[]> {
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -209,7 +210,7 @@ export async function generateModules(
       // For smaller projects, we can generate all files of the same type together
       if (files.length <= 3) {
         const response = await openai.chat.completions.create({
-          model: "gpt-4o",
+          model: "gpt-4o-mini",
           messages: [
             {
               role: "system",
@@ -240,7 +241,7 @@ export async function generateModules(
         // For larger projects, generate files one by one
         for (const file of files) {
           const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [
               {
                 role: "system",
@@ -298,7 +299,7 @@ export async function reviewCode(
       : '';
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -351,7 +352,7 @@ export async function testCode(code: string, testCases: string[]): Promise<TestR
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
